@@ -189,6 +189,12 @@ static void StringToDoubleConverter() {
     Converter(u"1.000000059604644775390625", 1.000000059604644775390625, 1.0f, 26);
     Converter(u"3.4028235677973366e38", 3.4028235677973366e38, std::numeric_limits<float>::max(), 21);
     Converter(u"3.4028235677973367e38", 3.4028235677973367e38, std::numeric_limits<float>::infinity(), 21);
+    const float minNormal = std::numeric_limits<float>::min();
+    const float maxSubnormal = std::nextafter(minNormal, 0.0f);
+    Converter(u"1.175494280757364291727783e-38", 1.175494280757364291727783e-38, maxSubnormal, 30);
+    Converter(u"1.175494280757364291727983e-38", 1.175494280757364291727983e-38, minNormal, 30);
+    Converter(u"-1.175494280757364291727783e-38", -1.175494280757364291727783e-38, -maxSubnormal, 31);
+    Converter(u"-1.175494280757364291727983e-38", -1.175494280757364291727983e-38, -minNormal, 31);
     Converter(u"7.0064923216240854e-46", 7.0064923216240854e-46, std::numeric_limits<float>::denorm_min(), 22);
     Converter(u"7.006492321624085e-46", 7.006492321624085e-46, 0.0f, 21);
     std::u16string longer(70, u'0');
