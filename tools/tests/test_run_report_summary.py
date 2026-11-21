@@ -68,6 +68,19 @@ class RunReportSummaryTests(unittest.TestCase):
                 self.assertEqual(report["system"]["os"], name)
                 self.assertIn(expected, render(report))
 
+    def test_system_summary_includes_available_gpu_versions(self):
+        report = self.report("stop-crash.json")
+        gpu = report["system"]["gpu"]
+        self.assertIn("GeForce RTX 3070, driver 552.44, Vulkan 1.3.280", render(report))
+        gpu.update(name=None, driver="example\ndriver", vulkan=None)
+        system = next(line for line in render(report).splitlines() if line.startswith("System:"))
+        self.assertTrue(system.endswith(", driver example driver"), system)
+        gpu.update(driver=None, vulkan="1.3.280")
+        system = next(line for line in render(report).splitlines() if line.startswith("System:"))
+        self.assertTrue(system.endswith(", Vulkan 1.3.280"), system)
+        report["system"]["gpu"] = None
+        self.assertIn("GiB RAM\n", render(report))
+
     def test_summary_marks_uncollected_sections(self):
         report = self.report("stop-missing-function.json")
         report["coverage"]["milestones"] = False
